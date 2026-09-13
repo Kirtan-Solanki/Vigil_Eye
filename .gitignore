@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Build outputs
+backend/*/bin/
+backend/*/obj/
+backend/*/dist/
+companion-android/app/build/
+companion-android/.gradle/
+dashboard-windows/bin/
+dashboard-windows/obj/
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment & secrets
+.env
+.env.local
+*.key
+*.pem
+*.p12
+secrets/
+
+# Database
+*.db
+*.sqlite
+postgres-data/
+timescaledb-data/
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage/
+*.cover
+
+# Docker
+docker-compose.override.yml

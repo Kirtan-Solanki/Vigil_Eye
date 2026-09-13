@@ -1,0 +1,119 @@
+version: '3.8'
+
+services:
+  # VE-008: PostgreSQL with TimescaleDB extension for time-series data
+  postgres:
+    image: timescale/timescaledb:latest-pg16
+    container_name: vigileye-postgres
+    environment:
+      POSTGRES_USER: vigileye_dev
+      POSTGRES_PASSWORD: changeme
+      POSTGRES_DB: vigileye
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vigileye_dev -d vigileye"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # VE-008: MinIO (S3-compatible object storage for encrypted exports/backups)
+  minio:
+    image: minio/minio:latest
+    container_name: vigileye-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: vigileye_dev
+      MINIO_ROOT_PASSWORD: changeme123
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Message queue (Redis as dev substitute for SQS/PubSub)
+  redis:
+    image: redis:7-alpine
+    container_name: vigileye-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # VE-007: Auth & Pairing Service
+  auth-pairing:
+    build:
+      context: ./backend
+      dockerfile: auth-pairing/Dockerfile
+    container_name: vigileye-auth-pairing
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__VigileEyeDb: "Server=postgres;Port=5432;Database=vigileye;UserId=vigileye_dev;Password=changeme;"
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # VE-007: Ingestion Service (placeholder for Phase 0)
+  ingestion:
+    build:
+      context: ./backend
+      dockerfile: ingestion/Dockerfile
+    container_name: vigileye-ingestion
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8081
+      ConnectionStrings__VigileEyeDb: "Server=postgres;Port=5432;Database=vigileye;UserId=vigileye_dev;Password=changeme;"
+      Redis__ConnectionString: "redis:6379"
+    ports:
+      - "8081:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # VE-007: Alert Engine Service (placeholder for Phase 0)
+  alert-engine:
+    build:
+      context: ./backend
+      dockerfile: alert-engine/Dockerfile
+    container_name: vigileye-alert-engine
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8082
+      ConnectionStrings__VigileEyeDb: "Server=postgres;Port=5432;Database=vigileye;UserId=vigileye_dev;Password=changeme;"
+      Redis__ConnectionString: "redis:6379"
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+  minio-data:
+  redis-data:
+
+networks:
+  default:
+    name: vigileye-network
