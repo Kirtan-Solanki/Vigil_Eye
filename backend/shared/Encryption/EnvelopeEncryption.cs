@@ -33,7 +33,7 @@ public class EnvelopeEncryption
         var ciphertext = new byte[plaintext.Length];
         var tag = new byte[TagSize];
 
-        cipher.Encrypt(iv, plaintext, null, ciphertext, tag);
+        cipher.Encrypt(iv, plaintext, ciphertext, tag, null);
 
         return (ciphertext, iv, tag);
     }

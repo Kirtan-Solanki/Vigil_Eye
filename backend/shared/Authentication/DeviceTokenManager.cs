@@ -45,16 +45,19 @@ public class DeviceTokenManager
 
         var expiresAt = issuedAt.AddMinutes(AccessTokenExpiryMinutes);
 
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var token = tokenHandler.CreateJwtToken(
-            issuer: _issuer,
-            audience: _audience,
-            subject: new System.Security.Claims.ClaimsIdentity(claims),
-            expires: expiresAt,
-            signingCredentials: new SigningCredentials(
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Issuer = _issuer,
+            Audience = _audience,
+            Subject = new System.Security.Claims.ClaimsIdentity(claims),
+            Expires = expiresAt,
+            SigningCredentials = new SigningCredentials(
                 new SymmetricSecurityKey(Encoding.UTF8.GetBytes("temp-signing-key-replace-with-rsa")),
                 SecurityAlgorithms.HmacSha256)
-        );
+        };
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var token = tokenHandler.CreateToken(tokenDescriptor);
 
         return tokenHandler.WriteToken(token);
     }

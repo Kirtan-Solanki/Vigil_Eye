@@ -66,16 +66,20 @@ public class EventsController : ControllerBase
             // VE-003: Validate that SMS events contain only metadata (no content field)
             if (eventData.Type == "sms_meta")
             {
-                var payload = JsonSerializer.Deserialize<Dictionary<string, object>>(eventData.Payload);
-                if (payload != null && payload.ContainsKey("content"))
+                var payloadJson = eventData.Payload is JsonElement je ? je.GetRawText() : eventData.Payload?.ToString();
+                if (!string.IsNullOrEmpty(payloadJson))
                 {
-                    _logger.LogWarning(
-                        "VE-003: Rejected SMS event from device {DeviceId} — content field present in v1 (metadata-only)",
-                        deviceId);
-                    return BadRequest(new {
-                        error = "invalid_event",
-                        message = "SMS events must be metadata-only in v1 (sender, recipient, timestamp). Content capture is feature-gated."
-                    });
+                    using var doc = JsonDocument.Parse(payloadJson);
+                    if (doc.RootElement.TryGetProperty("content", out _))
+                    {
+                        _logger.LogWarning(
+                            "VE-003: Rejected SMS event from device {DeviceId} — content field present in v1 (metadata-only)",
+                            deviceId);
+                        return BadRequest(new {
+                            error = "invalid_event",
+                            message = "SMS events must be metadata-only in v1 (sender, recipient, timestamp). Content capture is feature-gated."
+                        });
+                    }
                 }
             }
 
