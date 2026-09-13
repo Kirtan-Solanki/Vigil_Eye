@@ -3,7 +3,9 @@
 **Status:** DRAFT — Requires Legal sign-off  
 **Owner:** Legal (with Engineering support)  
 **Prepared:** 2026-09-13  
-**Related Ticket:** VE-001
+**Last Updated:** 2026-09-13  
+**Related Ticket:** VE-001  
+**Target Launch:** Global (all major markets)
 
 ---
 
@@ -78,7 +80,50 @@ Engineering needs this decision to configure feature flags and regional gating.
 
 ### Other Jurisdictions
 
-_[Legal to add target markets]_
+### Canada
+
+- **PIPEDA (Personal Information Protection and Electronic Documents Act)**
+  - **Applies to:** All features collecting personal information
+  - **Requirement:** _[Legal to complete — meaningful consent, purpose limitation]_
+  - **Can we ship?** ⏸️ PENDING
+
+- **CASL (Canada's Anti-Spam Legislation)**
+  - **Applies to:** Electronic communications monitoring
+  - **Requirement:** _[Legal to complete]_
+  - **Can we ship?** ⏸️ PENDING
+
+### Australia
+
+- **Privacy Act 1988 (Cth) — Australian Privacy Principles (APPs)**
+  - **Applies to:** All features
+  - **Requirement:** _[Legal to complete — parental consent for children]_
+  - **Can we ship?** ⏸️ PENDING
+
+- **Telecommunications (Interception and Access) Act 1979**
+  - **Applies to:** Call/SMS content capture
+  - **Requirement:** _[Legal to complete]_
+  - **Can we ship?** 🚫 NO (v1 metadata-only)
+
+### Brazil
+
+- **LGPD (Lei Geral de Proteção de Dados)**
+  - **Applies to:** All features
+  - **Requirement:** _[Legal to complete — specific consent for children's data]_
+  - **Can we ship?** ⏸️ PENDING
+
+### Japan
+
+- **APPI (Act on the Protection of Personal Information)**
+  - **Applies to:** All features
+  - **Requirement:** _[Legal to complete — special care for children's data]_
+  - **Can we ship?** ⏸️ PENDING
+
+### India
+
+- **DPDP Act 2023 (Digital Personal Data Protection Act)**
+  - **Applies to:** All features
+  - **Requirement:** _[Legal to complete — parental consent for children <18]_
+  - **Can we ship?** ⏸️ PENDING
 
 ---
 
@@ -129,6 +174,11 @@ public class FeatureFlags
 |------|------|------|--------|
 | Legal Counsel (U.S.) | _[TBD]_ | _[TBD]_ | ⏸️ PENDING |
 | Legal Counsel (EU/UK) | _[TBD]_ | _[TBD]_ | ⏸️ PENDING |
+| Legal Counsel (Canada) | _[TBD]_ | _[TBD]_ | ⏸️ PENDING |
+| Legal Counsel (Australia) | _[TBD]_ | _[TBD]_ | ⏸️ PENDING |
+| Legal Counsel (Brazil) | _[TBD]_ | _[TBD]_ | ⏸️ PENDING |
+| Legal Counsel (Japan) | _[TBD]_ | _[TBD]_ | ⏸️ PENDING |
+| Legal Counsel (India) | _[TBD]_ | _[TBD]_ | ⏸️ PENDING |
 | Product Lead | _[TBD]_ | _[TBD]_ | ⏸️ PENDING |
 | Engineering Lead | _[TBD]_ | _[TBD]_ | ⏸️ PENDING |
 
