@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page x:Class="VigilEye.Dashboard.Views.AlertsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid Padding="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Alerts Center"
+                   FontSize="28" FontWeight="Bold"
+                   Margin="0,0,0,16" Grid.Row="0"/>
+
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Spacing="12">
+                <!-- Tamper Alert -->
+                <Border Background="#FFFFEAEA"
+                        BorderBrush="#FFFF6666"
+                        BorderThickness="1"
+                        CornerRadius="8" Padding="16">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="⚠️"
+                                   FontSize="24" Margin="0,0,12,0"/>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="Tamper Alert"
+                                       FontWeight="Bold" FontSize="16" Foreground="#FFCC0000"/>
+                            <TextBlock Text="Monitoring indicator disabled on Emma's device."
+                                       FontSize="13" Foreground="#FF666680"/>
+                            <TextBlock Text="Just now"
+                                       FontSize="11" Foreground="#FF9999A8"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- App Usage Alert -->
+                <Border Background="#FFE8F0FE"
+                        BorderBrush="#FF4285F4"
+                        BorderThickness="1"
+                        CornerRadius="8" Padding="16">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="📊"
+                                   FontSize="24" Margin="0,0,12,0"/>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="Screen Time Alert"
+                                       FontWeight="Bold" FontSize="16" Foreground="#FF1A73E8"/>
+                            <TextBlock Text="Jack has exceeded 3 hours of screen time today."
+                                       FontSize="13" Foreground="#FF666680"/>
+                            <TextBlock Text="2 hours ago"
+                                       FontSize="11" Foreground="#FF9999A8"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>
