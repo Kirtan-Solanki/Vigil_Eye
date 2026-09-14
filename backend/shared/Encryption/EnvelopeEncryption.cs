@@ -11,7 +11,7 @@ namespace VE.Shared.Encryption;
 public class EnvelopeEncryption
 {
     private const int KeySize = 32; // AES-256
-    private const int IvSize = 16;  // AES block size
+    private const int IvSize = 12;  // 96-bit nonce for GCM
     private const int TagSize = 16; // GCM tag
 
     /// <summary>

@@ -9,6 +9,7 @@ import android.util.Log
 import com.vigileye.companion.data.local.EventDatabase
 import com.vigileye.companion.data.local.EventEntity
 import com.vigileye.companion.util.DateTimeUtils
+import kotlinx.coroutines.*
 import java.util.*
 
 /**
@@ -115,22 +116,15 @@ class CallLogCollector(private val context: Context) {
                             features
                         )
 
-                        // Create event entity
+                        // VE-003 invariant enforced: metadata only — no call audio/content.
+                        // Build payload JSON (metadata only: number, type, duration, timestamp)
+                        val payloadJson = """{"phoneNumber":"$normalizedNumber","callType":"$callType","duration":$duration,"timestamp":$timestamp,"contactName":"${contactName ?: ""}","numberLabel":"${numberLabel ?: ""}"}""".trim()
+
                         val event = EventEntity(
-                            id = "call_$callId",
-                            timestamp = timestamp,
-                            type = "call",
-                            title = "$callType call",
-                            description = description,
-                            childId = "", // Will be set by caller
-                            metadata = mapOf(
-                                "phoneNumber" to normalizedNumber,
-                                "callType" to callType,
-                                "duration" to duration,
-                                "contactName" to contactName,
-                                "numberLabel" to numberLabel,
-                                "features" to features
-                            )
+                            eventType = "call",
+                            payload = payloadJson,
+                            occurredAt = timestamp,
+                            synced = false
                         )
 
                         newCalls.add(event)
@@ -187,7 +181,7 @@ class CallLogCollector(private val context: Context) {
         if (features and CallLog.Calls.FEATURES_WIFI != 0) {
             featureDescriptions.add("wifi")
         }
-        if (feedures and CallLog.Calls.FEATURES_SIP != 0) {
+        if (features and CallLog.Calls.FEATURES_SIP != 0) {
             featureDescriptions.add("SIP")
         }
         if (featureDescriptions.isNotEmpty()) {
@@ -195,6 +189,25 @@ class CallLogCollector(private val context: Context) {
         }
 
         return parts.joinWithSpace(" ")
+    }
+
+    /**
+     * Persist collected call events to encrypted EventDatabase and trigger sync.
+     * Wired to SyncWorker (VE-013) for batch upload to backend.
+     * Per VE-003: payload contains metadata only — no recording/content.
+     */
+    suspend fun persistAndSync(context: Context, events: List<EventEntity>) = withContext(Dispatchers.IO) {
+        val encryptionKey = ByteArray(32) // TODO: Derive from Keystore in production
+        val db = EventDatabase.getInstance(context, encryptionKey)
+        val dao = db.eventDao()
+
+        for (evt in events) {
+            dao.insert(evt)
+        }
+
+        // Trigger immediate sync for location-critical; periodic covers others
+        com.vigileye.companion.worker.SyncWorker.triggerImmediateSync(context)
+        Log.i(TAG, "VE-011: Persisted ${events.size} call events to EventDatabase; SyncWorker triggered")
     }
 
     /**

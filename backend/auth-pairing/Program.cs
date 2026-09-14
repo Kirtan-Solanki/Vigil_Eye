@@ -20,7 +20,7 @@ var connectionString = builder.Configuration.GetConnectionString("VigileEyeDb")
     ?? "Server=localhost;Port=5432;Database=vigileye;UserId=vigileye_dev;Password=changeme;";
 
 builder.Services.AddDbContext<VigileEyeDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseNpgsql(connectionString, b => b.MigrationsAssembly("VE.Shared")));
 
 // Add CORS for development
 builder.Services.AddCors(options =>
@@ -34,6 +34,13 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+// Ensure all database tables are created on startup
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<VigileEyeDbContext>();
+    db.Database.EnsureCreated();
+}
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
