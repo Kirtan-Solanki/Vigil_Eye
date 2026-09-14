@@ -31,7 +31,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
-        android:name=".VigileEyeApplication"
+        android:name=".VigileyeApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -54,7 +54,7 @@
 
         <!-- VE-009: Guided setup activity -->
         <activity
-            android:name=".ui.setup.SetupActivity"
+            android:name=".ui.onboarding.SetupActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
 

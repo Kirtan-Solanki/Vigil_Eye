@@ -10,6 +10,8 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import com.vigileye.companion.geofence.LocationTracker
+import com.vigileye.companion.geofence.model.LocationEvent
 import com.vigileye.companion.MainActivity
 import com.vigileye.companion.R
 
@@ -71,6 +73,10 @@ class MonitoringIndicatorService : Service() {
         // Start as foreground service with persistent notification
         val notification = createMonitoringNotification()
         startForeground(NOTIFICATION_ID, notification)
+
+        // VE-020: Start location tracking (metadata-only, no raw GPS)
+        val tracker = LocationTracker(this)
+        tracker.startLocationTracking()
 
         // Return sticky to ensure service restarts if killed by system
         return START_STICKY
