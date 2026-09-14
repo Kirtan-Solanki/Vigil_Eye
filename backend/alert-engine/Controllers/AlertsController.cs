@@ -14,6 +14,24 @@ public class AlertsController : ControllerBase
     [HttpGet("health")]
     public IActionResult Health() => Ok(new { service = "alert-engine", status = "healthy", ve = "VE-021" });
 
+    [HttpGet("rules")]
+    public IActionResult ListRules()
+    {
+        // VE-021: Return metadata-only alert rules (no message content)
+        // Per VE-003 / invariants.md: never expose raw content captured by events
+        return Ok(new
+        {
+            rules = new[]
+            {
+                new { id = "r1", type = "GeofenceExit", enabled = true, child_id = "1" },
+                new { id = "r2", type = "TamperDetected", enabled = true, child_id = "1" }
+            },
+            meta_only = true,
+            note = "VE-003 enforced: rules operate on event metadata; no SMS/call content evaluated",
+            ve = "VE-021"
+        });
+    }
+
     [HttpPost("rule")]
     public IActionResult CreateRule([FromBody] object rule)
     {
