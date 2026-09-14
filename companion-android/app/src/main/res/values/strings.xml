@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">VigilEye Companion</string>
+    <string name="monitoring_indicator_title">Parental Monitoring Active</string>
+    <string name="monitoring_indicator_content">This device is being monitored by a parent or guardian</string>
+</resources>
